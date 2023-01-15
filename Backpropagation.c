@@ -27,7 +27,6 @@ int main(int argc, char *argv[]) {
     char line[150];
     char *valor;
     char *valueAnt;
-    char final;
     char resp;
     int qtdAmostras = -1;
     int colum = 0;
@@ -112,10 +111,12 @@ int main(int argc, char *argv[]) {
 
     // Criando a matriz com as amostras de teste
     qtdAmostras = -1;
+
     while (fgets(line, sizeof(line), arquivoTeste)) qtdAmostras++;
     matriz_amostras_teste = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
     rewind(arquivoTeste); row = colum = 0;
     fgets(line, sizeof(line), arquivoTeste);
+
     while (fgets(line, sizeof(line), arquivoTeste)) {
         valor = strtok(line, ",");
         matriz_amostras_teste[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
@@ -195,7 +196,6 @@ int main(int argc, char *argv[]) {
                 pesos_s[i][j] = (double)(rand())/(double)(RAND_MAX)*0.5 - (double)(rand())/(double)(RAND_MAX)*0.5;
         }
 
-
         // Exibindo as matrizes com seus pesos
         puts("\n");
         printf("Pesos iniciais gerados: \n");
@@ -216,13 +216,16 @@ int main(int argc, char *argv[]) {
             contador++;
             printf(" . ");
             if (opcoes[1] == 1) { // erro max
-                if( erro <= er_limiar) {
-                    printf("\nErro max. atingido! Erro da rede: %e \n", erro);
+                if( erro <= er_limiar)
+                {
+                    printf("\nErro máximo atingido\n");
+                    printf("Erro da rede: %f\n", erro);
                     break;
                 }
             } else { // num iter
                 if (contador == num_iteracoes) {
-                    printf("\nNumero max. de iteracoes alcancado! Erro da rede: %f\n", erro);
+                    printf("\nNúmero máximo de iterações alcançado\n");
+                    printf("Erro da rede: %f\n", erro);
                     break;
                 }
             }
@@ -238,7 +241,7 @@ int main(int argc, char *argv[]) {
         puts("\n");
 
         // Teste da rede
-        printf("\nSeguindo para os testes da RNA Backpropagation... \n");
+        printf("\nProsseguindo com os testes da RNA Backpropagation\n");
         printf("Quantidade de amostras para o teste: %d \n", qtdAmostras);
 
         for (row=0; row < qtdAmostras; row++) // Testando a rede para cada amostra do conjunto de teste
@@ -249,7 +252,7 @@ int main(int argc, char *argv[]) {
         ExibeMatrizInt(matriz_confusao, neurCamSaida, neurCamSaida);
 
         // Pergunta se o usuario deseja realizar um novo teste
-        printf("\n\nDeseja refazer o treinamento? [S, n]: ");
+        printf("\n\nDeseja realizar o treinamento novamente? [S/n]:");
         setbuf(stdin, NULL); scanf("%c", &op); op =  toupper(op);
 
         // Limpa as matrizes com os pesos e zera a matriz de confusao
