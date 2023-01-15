@@ -7,13 +7,13 @@
 
 void MenuApresentacao(){
 // Apresentação do programa
-    printf(" *************************************************** \n");
-    printf("        ** RNA Backpropagation **         \n");
-    printf("                     2022                         \n");
-    printf("  - Trabalho Pratico - Inteligencia Artificial    \n");
-    printf("  - Aluno: Felipe Sousa Canuto dos Santos, RA 171257375            \n");
-    printf("  - Aluno: Heitor, RA *******            \n");
-    printf(" *************************************************** \n");
+    printf(" ***************************************************        \n");
+    printf("        ** RNA Backpropagation **                           \n");
+    printf("                     2022                                   \n");
+    printf("  - Trabalho Pratico - Inteligencia Artificial              \n");
+    printf("  - Aluno: Felipe Sousa Canuto dos Santos, RA 171257375     \n");
+    printf("  - Aluno: Heitor Daniel Vani Gomes, RA 181255261           \n");
+    printf(" ***************************************************        \n");
 }
 
 void MenuEscolhaFuncao(){
@@ -31,7 +31,7 @@ void MenuEscolhaParada(){
 }
 
 void ExibeFimTreinamento(int i){
-    printf("O treinamento finalizado! :D \n\n");
+    printf("O treinamento finalizado! \n\n");
     printf("Num. de iteracoes realizadas: %d \n\n", i);
     printf("Pesos finais obtidos: \n");
 }

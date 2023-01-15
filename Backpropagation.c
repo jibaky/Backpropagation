@@ -143,15 +143,15 @@ int main(int argc, char *argv[]) {
         ExibeInfoNeuronios(qtdAmostras, neurCamEntrada, neurCamSaida, neurCamOculta);
 
         // Configuração manual do numero de neuronios na camada oculta
-        printf("Deseja alterar o numero de neuronios na camada oculta? [S,n]: ");
+        printf("Deseja alterar o número de neuronios na camada oculta? [S,n]: ");
         setbuf(stdin, NULL); scanf("%c", &resp);
         resp = toupper(resp);
 
         if (resp == 'S') {
-            printf("Entre com o novo numero de neuronios na camada oculta: ");
+            printf("Entre com o novo número de neuronios na camada oculta: ");
             setbuf(stdin, NULL); scanf("%i", &neurCamOculta);
         } else if (resp != 'N') return printf("Opcao invalida :( \n");
-        printf("Numero de Neuronios na Camada Oculta: %i \n", neurCamOculta);
+        printf("Número de Neuronios na Camada Oculta: %i \n", neurCamOculta);
 
 
         // Verificando a função de transferência desejada
