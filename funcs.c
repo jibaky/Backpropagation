@@ -44,10 +44,10 @@ void ExibeMatrizInt(int **matriz, int lin, int col) {
 
 
 void ExibeMatrizDouble(double **matriz, int lin, int col) {
-    printf("Neuronio 1 |     2     |     3     |     4     |     5     |     6     |     7     | ... \n");
+    printf("    1    |    2    |    3    |    4    |    5    |    6    |    7    |\n");
     for (int i=0; i<lin; i++) {
         for (int j=0; j<col; j++)
-            printf(" %9f |", matriz[i][j]);
+            printf(" %.4f |", matriz[i][j]);
         printf("\n");
     }
 }
