@@ -9,15 +9,15 @@
 int main(int argc, char *argv[]) {
 
     // Configurando ambiente
-    setlocale(LC_ALL, "");
+    setlocale(LC_ALL,"portuguese");
 
     MenuApresentacao();
 
     // Declaração das variáveis
-    char nomeArquivoTreino[30];
-    char nomeArquivoTeste[30];
-    FILE* arquivoTreino;
-    FILE* arquivoTeste;
+    char trainingFileName[30];
+    char testFileName[30];
+    FILE* trainingFile;
+    FILE* testFile;
     int neurCamEntrada;
     int neurCamSaida;
     int neurCamOculta;
@@ -41,43 +41,43 @@ int main(int argc, char *argv[]) {
     // Abrindo o arquivos de teste e de treino
     if(argc == 1) { // Necessita do nome do arquivo
         printf("Voce tambem pode entrar com o nome do arquivo direto nos argumentos. \nEx: ./Backpropagation treinamento.csv teste.csv\n\n");
-        printf("Entre com o nome do arquivo de treino: ");
-        setbuf(stdin, NULL); scanf("%s", nomeArquivoTreino);
-        printf("Abrindo arquivo: %s \n", nomeArquivoTreino);
+        printf("Nome do arquivo de treino: ");
+        setbuf(stdin, NULL); scanf("%s", trainingFileName);
+        printf("Abrindo arquivo: %s \n", trainingFileName);
 
-        printf("Agora entre com o nome do arquivo de teste: ");
-        setbuf(stdin, NULL); scanf("%s", nomeArquivoTeste);
-        printf("Abrindo arquivo: %s \n", nomeArquivoTeste);
+        printf("Nome do arquivo de teste: ");
+        setbuf(stdin, NULL); scanf("%s", testFileName);
+        printf("Abrindo arquivo: %s \n", testFileName);
 
     } else if(argc > 1) { // Abre arquivo por parâmetro
 
-        strcpy(nomeArquivoTreino, argv[1]);
-        printf("Abrindo arquivo treino: %s \n", nomeArquivoTreino);
+        strcpy(trainingFileName, argv[1]);
+        printf("Abrindo arquivo treino: %s \n", trainingFileName);
 
-        strcpy(nomeArquivoTeste, argv[2]);
-        printf("Abrindo arquivo teste: %s \n", nomeArquivoTeste);
+        strcpy(testFileName, argv[2]);
+        printf("Abrindo arquivo teste: %s \n", testFileName);
 
     } else return printf("Argumentos inválidos :( \n");
 
-    if(!(arquivoTreino = fopen(nomeArquivoTreino, "r")))
+    if(!(trainingFile = fopen(trainingFileName, "r")))
         return printf("Arquivo treino não encontrado! :( \n");
-    if(!(arquivoTeste = fopen(nomeArquivoTeste, "r")))
+    if(!(testFile = fopen(testFileName, "r")))
         return printf("Arquivo teste não encontrado! :( \n");
     printf("Arquivo aberto. \n");
 
 
     // Verificando a quantidade de neuronios na camada de entrada
-    while (fgets(val, 4, arquivoTreino) != NULL) {
+    while (fgets(val, 4, trainingFile) != NULL) {
         i++;
         if (val[2] != ',') {
             neurCamEntrada = i - 1;
-            fgets(val, 4, arquivoTreino);
+            fgets(val, 4, trainingFile);
             break;
         }
     }
 
     //Verificando a quantidade de neuronios na camada de saida
-    while (fgets(line, sizeof(line), arquivoTreino)) {
+    while (fgets(line, sizeof(line), trainingFile)) {
         valor = strtok(line, ",");
         while (valor != NULL) {
             valueAnt = valor;
@@ -92,9 +92,9 @@ int main(int argc, char *argv[]) {
 
     // Criando a matriz com as amostras de treinamento
     matriz_amostras = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
-    rewind(arquivoTreino);
-    fgets(line, sizeof(line), arquivoTreino);
-    while (fgets(line, sizeof(line), arquivoTreino)) {
+    rewind(trainingFile);
+    fgets(line, sizeof(line), trainingFile);
+    while (fgets(line, sizeof(line), trainingFile)) {
         valor = strtok(line, ",");
         matriz_amostras[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
         while (valor != NULL && colum <= neurCamEntrada) {
@@ -107,17 +107,16 @@ int main(int argc, char *argv[]) {
         if(row == qtdAmostras) break;
     }
     EmbaralharLinhas(matriz_amostras, qtdAmostras); // Embaralhar linhas para desagrupar as classes
-    //ExibeMatrizInt(matriz_amostras, qtdAmostras, neurCamEntrada+1);
 
     // Criando a matriz com as amostras de teste
     qtdAmostras = -1;
 
-    while (fgets(line, sizeof(line), arquivoTeste)) qtdAmostras++;
+    while (fgets(line, sizeof(line), testFile)) qtdAmostras++;
     matriz_amostras_teste = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
-    rewind(arquivoTeste); row = colum = 0;
-    fgets(line, sizeof(line), arquivoTeste);
+    rewind(testFile); row = colum = 0;
+    fgets(line, sizeof(line), testFile);
 
-    while (fgets(line, sizeof(line), arquivoTeste)) {
+    while (fgets(line, sizeof(line), testFile)) {
         valor = strtok(line, ",");
         matriz_amostras_teste[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
         while (valor != NULL && colum < neurCamEntrada + 1) {
@@ -129,7 +128,6 @@ int main(int argc, char *argv[]) {
         row++;
         if(row == qtdAmostras) break;
     }
-    // ExibeMatrizInt(matriz_amostras_teste, qtdAmostras, neurCamEntrada+1);
 
     //Criando a matriz de confusão
     int **matriz_confusao = (int **) malloc(neurCamSaida * sizeof(sizeof(int *)));
@@ -167,9 +165,9 @@ int main(int argc, char *argv[]) {
         if (opcoes[1] == 1) { // Erro max.
             printf("Entre com o valor do erro maximo: ");
             setbuf(stdin, NULL); scanf("%lf", &er_limiar);
-        } else if (opcoes[1] != 2) return printf("Opcao invalida :( \n");
+        } else if (opcoes[1] != 2) return printf("Opção invalida :( \n");
         else {  // Quant iteracoes
-            printf("Entre com o valor maximo de iteracoes: ");
+            printf("Entre com o valor maximo de iterações: ");
             setbuf(stdin, NULL); scanf("%d", &num_iteracoes);
         }
 
@@ -209,12 +207,12 @@ int main(int argc, char *argv[]) {
         int contador = 0;
         double erro; // Erro da rede
         int classe_posicao = neurCamEntrada;
-        printf("\nTreinando . . .");
+        printf("\nTreinando...");
         do {    // Treina o conjunto de amostras até o limite estabelecido
             for (row=0; row < qtdAmostras; row++) // Passa toda a amostra no Backpropagation
                 erro = Treinar(matriz_amostras[row], classe_posicao, pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
             contador++;
-            printf(" . ");
+            printf(".");
             if (opcoes[1] == 1) { // erro max
                 if( erro <= er_limiar)
                 {
@@ -265,8 +263,8 @@ int main(int argc, char *argv[]) {
 
     // Finalizando o programa
     printf("\nPrograma finalizdo;;; \n");
-    fclose(arquivoTreino);
-    fclose(arquivoTeste);
+    fclose(trainingFile);
+    fclose(testFile);
 
     system("PAUSE");
     return 0;
