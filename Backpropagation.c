@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
 
     // Configurando ambiente
-    setlocale(LC_ALL, "");
+    setlocale(LC_ALL, "Portuguese");
 
     MenuApresentacao();
 
@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
     int qtdAmostras = -1;
     int colum = 0;
     int row = 0;
-    int **matriz_amostras;
-    int **matriz_amostras_teste;
-    double er_limiar;
-    int num_iteracoes;
+    int **matrizAmostras;
+    int **matrizAmostrasTeste;
+    double erLimiar;
+    int numIteracoes;
     char op;
 
 
@@ -91,14 +91,14 @@ int main(int argc, char *argv[]) {
     neurCamOculta = abs(sqrt(neurCamEntrada * neurCamSaida));
 
     // Criando a matriz com as amostras de treinamento
-    matriz_amostras = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
+    matrizAmostras = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
     rewind(arquivoTreino);
     fgets(line, sizeof(line), arquivoTreino);
     while (fgets(line, sizeof(line), arquivoTreino)) {
         valor = strtok(line, ",");
-        matriz_amostras[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
+        matrizAmostras[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
         while (valor != NULL && colum <= neurCamEntrada) {
-            matriz_amostras[row][colum] = atoi(valor);
+            matrizAmostras[row][colum] = atoi(valor);
             valor = strtok(NULL, ",");
             colum++;
         }
@@ -106,22 +106,22 @@ int main(int argc, char *argv[]) {
         row++;
         if(row == qtdAmostras) break;
     }
-    EmbaralharLinhas(matriz_amostras, qtdAmostras); // Embaralhar linhas para desagrupar as classes
-    //ExibeMatrizInt(matriz_amostras, qtdAmostras, neurCamEntrada+1);
+    EmbaralharLinhas(matrizAmostras, qtdAmostras); // Embaralhar linhas para desagrupar as classes
+    //ExibeMatrizInt(matrizAmostras, qtdAmostras, neurCamEntrada+1);
 
     // Criando a matriz com as amostras de teste
     qtdAmostras = -1;
 
     while (fgets(line, sizeof(line), arquivoTeste)) qtdAmostras++;
-    matriz_amostras_teste = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
+    matrizAmostrasTeste = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
     rewind(arquivoTeste); row = colum = 0;
     fgets(line, sizeof(line), arquivoTeste);
 
     while (fgets(line, sizeof(line), arquivoTeste)) {
         valor = strtok(line, ",");
-        matriz_amostras_teste[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
+        matrizAmostrasTeste[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
         while (valor != NULL && colum < neurCamEntrada + 1) {
-            matriz_amostras_teste[row][colum] = atoi(valor);
+            matrizAmostrasTeste[row][colum] = atoi(valor);
             valor = strtok(NULL, ",");
             colum++;
         }
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
         row++;
         if(row == qtdAmostras) break;
     }
-    // ExibeMatrizInt(matriz_amostras_teste, qtdAmostras, neurCamEntrada+1);
+    // ExibeMatrizInt(matrizAmostrasTeste, qtdAmostras, neurCamEntrada+1);
 
     //Criando a matriz de confusão
     int **matriz_confusao = (int **) malloc(neurCamSaida * sizeof(sizeof(int *)));
@@ -143,15 +143,15 @@ int main(int argc, char *argv[]) {
         ExibeInfoNeuronios(qtdAmostras, neurCamEntrada, neurCamSaida, neurCamOculta);
 
         // Configuração manual do numero de neuronios na camada oculta
-        printf("Deseja alterar o número de neuronios na camada oculta? [S,n]: ");
+        printf("Deseja alterar o numero de neuronios na camada oculta? [S,n]: ");
         setbuf(stdin, NULL); scanf("%c", &resp);
         resp = toupper(resp);
 
         if (resp == 'S') {
-            printf("Entre com o novo número de neuronios na camada oculta: ");
+            printf("Entre com o novo numero de neuronios na camada oculta: ");
             setbuf(stdin, NULL); scanf("%i", &neurCamOculta);
         } else if (resp != 'N') return printf("Opcao invalida :( \n");
-        printf("Número de Neuronios na Camada Oculta: %i \n", neurCamOculta);
+        printf("Numero de Neuronios na Camada Oculta: %i \n", neurCamOculta);
 
 
         // Verificando a função de transferência desejada
@@ -166,11 +166,11 @@ int main(int argc, char *argv[]) {
 
         if (opcoes[1] == 1) { // Erro max.
             printf("Entre com o valor do erro maximo: ");
-            setbuf(stdin, NULL); scanf("%lf", &er_limiar);
+            setbuf(stdin, NULL); scanf("%lf", &erLimiar);
         } else if (opcoes[1] != 2) return printf("Opcao invalida :( \n");
         else {  // Quant iteracoes
             printf("Entre com o valor maximo de iteracoes: ");
-            setbuf(stdin, NULL); scanf("%d", &num_iteracoes);
+            setbuf(stdin, NULL); scanf("%d", &numIteracoes);
         }
 
         // Setando tx de aprendizado (n)                ;
@@ -212,19 +212,19 @@ int main(int argc, char *argv[]) {
         printf("\nTreinando . . .");
         do {    // Treina o conjunto de amostras até o limite estabelecido
             for (row=0; row < qtdAmostras; row++) // Passa toda a amostra no Backpropagation
-                erro = Treinar(matriz_amostras[row], classe_posicao, pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
+                erro = Treinar(matrizAmostras[row], classe_posicao, pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
             contador++;
-            printf(" . ");
+
             if (opcoes[1] == 1) { // erro max
-                if( erro <= er_limiar)
+                if(erro <= erLimiar)
                 {
-                    printf("\nErro máximo atingido\n");
+                    printf("\nErro maximo atingido\n");
                     printf("Erro da rede: %f\n", erro);
                     break;
                 }
             } else { // num iter
-                if (contador == num_iteracoes) {
-                    printf("\nNúmero máximo de iterações alcançado\n");
+                if (contador == numIteracoes) {
+                    printf("\nNumero maximo de iteracoes alcancado\n");
                     printf("Erro da rede: %f\n", erro);
                     break;
                 }
@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
         printf("Quantidade de amostras para o teste: %d \n", qtdAmostras);
 
         for (row=0; row < qtdAmostras; row++) // Testando a rede para cada amostra do conjunto de teste
-            Testar(matriz_confusao, matriz_amostras_teste[row], pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
+            Testar(matriz_confusao, matrizAmostrasTeste[row], pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
 
         // Exibindo matriz de confusão
         printf("\nMatriz de confusao obtida: \n");
