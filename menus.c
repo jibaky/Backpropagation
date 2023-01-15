@@ -1,13 +1,19 @@
+//
+// Created by Cpides on 15/01/2023.
+//
+
 #include <stdio.h>
 #include "menus.h"
 
 void MenuApresentacao(){
 // Apresentação do programa
-    printf("\n - Rede Neural Backpropagation\n");
-    printf("\n - Trabalho Pratico - Inteligencia Artificial 2022");
-    printf("\n - Aluno: Felipe Canuto, RA 171257375");
-    printf("\n - Aluno: Heitor Gomes, RA 181255261");
-    printf("\n - Professor: Almir O. Artero \n\n");
+    printf(" *************************************************** \n");
+    printf("        ** RNA Backpropagation **         \n");
+    printf("                     2022                         \n");
+    printf("  - Trabalho Pratico - Inteligencia Artificial    \n");
+    printf("  - Aluno: Felipe Sousa Canuto dos Santos, RA 171257375            \n");
+    printf("  - Aluno: Heitor, RA *******            \n");
+    printf(" *************************************************** \n");
 }
 
 void MenuEscolhaFuncao(){
@@ -24,8 +30,16 @@ void MenuEscolhaParada(){
     printf("Opcao: ");
 }
 
-void ExibeFimTreinamento(int contador){
+void ExibeFimTreinamento(int i){
     printf("O treinamento finalizado! :D \n\n");
-    printf("Num. de iteracoes realizadas: %d \n\n", contador);
+    printf("Num. de iteracoes realizadas: %d \n\n", i);
     printf("Pesos finais obtidos: \n");
+}
+
+void ExibeInfoNeuronios(int i, int in, int saida, int oculta){
+    printf("\nInformacoes encontradas no conjunto de amostras: \n");
+    printf("Quantidade de amostras no arquivo : %d \n", i);
+    printf("Numero de Neuronios na Camada de Entrada: %i \n", in);
+    printf("Numero de Neuronios na Camada de Saida: %i \n", saida);
+    printf("Numero de Neurunios na Camada Oculta: %i \n\n", oculta);
 }

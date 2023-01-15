@@ -1,6 +1,6 @@
 // Arquivo Principal
 
-// Biblioteca com as função para treino e teste da rede neural
+// Biblioteca com as função para treino e teste da RNA
 #include <locale.h>
 #include "funcs.c"
 #include "menus.c"
@@ -14,24 +14,24 @@ int main(int argc, char *argv[]) {
     MenuApresentacao();
 
     // Declaração das variáveis
-    char nome_arquivo_treino[30];
-    char nome_arquivo_teste[30];
-    FILE* arquivo_treino;
-    FILE* arquivo_teste;
-    int neur_cam_entrada;
-    int neur_cam_saida;
-    int neur_cam_oculta;
+    char nomeArquivoTreino[30];
+    char nomeArquivoTeste[30];
+    FILE* arquivoTreino;
+    FILE* arquivoTeste;
+    int neurCamEntrada;
+    int neurCamSaida;
+    int neurCamOculta;
     int i = 0;
     char n[4];
     char val[3];
     char line[150];
     char *valor;
-    char *val_ant;
+    char *valueAnt;
     char final;
     char resp;
-    int quant_amostras = -1;
-    int coluna = 0;
-    int linha = 0;
+    int qtdAmostras = -1;
+    int colum = 0;
+    int row = 0;
     int **matriz_amostras;
     int **matriz_amostras_teste;
     double er_limiar;
@@ -43,117 +43,114 @@ int main(int argc, char *argv[]) {
     if(argc == 1) { // Necessita do nome do arquivo
         printf("Voce tambem pode entrar com o nome do arquivo direto nos argumentos. \nEx: ./Backpropagation treinamento.csv teste.csv\n\n");
         printf("Entre com o nome do arquivo de treino: ");
-        setbuf(stdin, NULL); scanf("%s", nome_arquivo_treino);
-        printf("Abrindo arquivo: %s \n", nome_arquivo_treino);
+        setbuf(stdin, NULL); scanf("%s", nomeArquivoTreino);
+        printf("Abrindo arquivo: %s \n", nomeArquivoTreino);
 
         printf("Agora entre com o nome do arquivo de teste: ");
-        setbuf(stdin, NULL); scanf("%s", nome_arquivo_teste);
-        printf("Abrindo arquivo: %s \n", nome_arquivo_teste);
+        setbuf(stdin, NULL); scanf("%s", nomeArquivoTeste);
+        printf("Abrindo arquivo: %s \n", nomeArquivoTeste);
 
     } else if(argc > 1) { // Abre arquivo por parâmetro
 
-        strcpy(nome_arquivo_treino, argv[1]);
-        printf("Abrindo arquivo treino: %s \n", nome_arquivo_treino);
+        strcpy(nomeArquivoTreino, argv[1]);
+        printf("Abrindo arquivo treino: %s \n", nomeArquivoTreino);
 
-        strcpy(nome_arquivo_teste, argv[2]);
-        printf("Abrindo arquivo teste: %s \n", nome_arquivo_teste);
+        strcpy(nomeArquivoTeste, argv[2]);
+        printf("Abrindo arquivo teste: %s \n", nomeArquivoTeste);
 
     } else return printf("Argumentos inválidos :( \n");
 
-    if(!(arquivo_treino = fopen(nome_arquivo_treino, "r")))
+    if(!(arquivoTreino = fopen(nomeArquivoTreino, "r")))
         return printf("Arquivo treino não encontrado! :( \n");
-    if(!(arquivo_teste = fopen(nome_arquivo_teste, "r")))
+    if(!(arquivoTeste = fopen(nomeArquivoTeste, "r")))
         return printf("Arquivo teste não encontrado! :( \n");
     printf("Arquivo aberto. \n");
 
 
     // Verificando a quantidade de neuronios na camada de entrada
-    while (fgets(val, 4, arquivo_treino) != NULL) {
+    while (fgets(val, 4, arquivoTreino) != NULL) {
         i++;
         if (val[2] != ',') {
-            neur_cam_entrada = i-1;
-            fgets(val, 4, arquivo_treino);
+            neurCamEntrada = i - 1;
+            fgets(val, 4, arquivoTreino);
             break;
         }
     }
 
     //Verificando a quantidade de neuronios na camada de saida
-    while (fgets(line, sizeof(line), arquivo_treino)) {
+    while (fgets(line, sizeof(line), arquivoTreino)) {
         valor = strtok(line, ",");
         while (valor != NULL) {
-            val_ant = valor;
+            valueAnt = valor;
             valor = strtok(NULL, ",");
         }
-        quant_amostras++;
+        qtdAmostras++;
     }
-    neur_cam_saida = val_ant[0] - '0';
+    neurCamSaida = valueAnt[0] - '0';
 
     // Verificando a quantidade de neuronios na camada oculta de maneira automatica
-    neur_cam_oculta = abs(sqrt(neur_cam_entrada * neur_cam_saida));
+    neurCamOculta = abs(sqrt(neurCamEntrada * neurCamSaida));
 
     // Criando a matriz com as amostras de treinamento
-    matriz_amostras = (int **) malloc(quant_amostras * sizeof(sizeof(int *)));
-    rewind(arquivo_treino);
-    fgets(line, sizeof(line), arquivo_treino);
-    while (fgets(line, sizeof(line), arquivo_treino)) {
+    matriz_amostras = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
+    rewind(arquivoTreino);
+    fgets(line, sizeof(line), arquivoTreino);
+    while (fgets(line, sizeof(line), arquivoTreino)) {
         valor = strtok(line, ",");
-        matriz_amostras[linha] = (int *) malloc((neur_cam_entrada+1) * sizeof(int));
-        while (valor != NULL && coluna <= neur_cam_entrada) {
-            matriz_amostras[linha][coluna] = atoi(valor);
+        matriz_amostras[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
+        while (valor != NULL && colum <= neurCamEntrada) {
+            matriz_amostras[row][colum] = atoi(valor);
             valor = strtok(NULL, ",");
-            coluna++;
+            colum++;
         }
-        coluna = 0;
-        linha++;
-        if(linha == quant_amostras) break;
+        colum = 0;
+        row++;
+        if(row == qtdAmostras) break;
     }
-    EmbaralharLinhas(matriz_amostras, quant_amostras); // Embaralhar linhas para desagrupar as classes
-    //ExibeMatrizInt(matriz_amostras, quant_amostras, neur_cam_entrada+1);
+    EmbaralharLinhas(matriz_amostras, qtdAmostras); // Embaralhar linhas para desagrupar as classes
+    //ExibeMatrizInt(matriz_amostras, qtdAmostras, neurCamEntrada+1);
 
     // Criando a matriz com as amostras de teste
-    quant_amostras = -1;
-    while (fgets(line, sizeof(line), arquivo_teste)) quant_amostras++;
-    matriz_amostras_teste = (int **) malloc(quant_amostras * sizeof(sizeof(int *)));
-    rewind(arquivo_teste); linha = coluna = 0;
-    fgets(line, sizeof(line), arquivo_teste);
-    while (fgets(line, sizeof(line), arquivo_teste)) {
+    qtdAmostras = -1;
+    while (fgets(line, sizeof(line), arquivoTeste)) qtdAmostras++;
+    matriz_amostras_teste = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
+    rewind(arquivoTeste); row = colum = 0;
+    fgets(line, sizeof(line), arquivoTeste);
+    while (fgets(line, sizeof(line), arquivoTeste)) {
         valor = strtok(line, ",");
-        matriz_amostras_teste[linha] = (int *) malloc((neur_cam_entrada+1) * sizeof(int));
-        while (valor != NULL && coluna < neur_cam_entrada+1) {
-            matriz_amostras_teste[linha][coluna] = atoi(valor);
+        matriz_amostras_teste[row] = (int *) malloc((neurCamEntrada + 1) * sizeof(int));
+        while (valor != NULL && colum < neurCamEntrada + 1) {
+            matriz_amostras_teste[row][colum] = atoi(valor);
             valor = strtok(NULL, ",");
-            coluna++;
+            colum++;
         }
-        coluna = 0;
-        linha++;
-        if(linha == quant_amostras) break;
+        colum = 0;
+        row++;
+        if(row == qtdAmostras) break;
     }
-    // ExibeMatrizInt(matriz_amostras_teste, quant_amostras, neur_cam_entrada+1);
+    // ExibeMatrizInt(matriz_amostras_teste, qtdAmostras, neurCamEntrada+1);
 
     //Criando a matriz de confusão
-    int **matriz_confusao = (int **) malloc(neur_cam_saida * sizeof(sizeof(int *)));
-    for (i=0; i<neur_cam_saida; i++) {
-        matriz_confusao[i] = (int *) malloc(neur_cam_saida * sizeof(int));
-        for (int j=0; j<neur_cam_saida; j++) matriz_confusao[i][j] = 0;
+    int **matriz_confusao = (int **) malloc(neurCamSaida * sizeof(sizeof(int *)));
+    for (i=0; i < neurCamSaida; i++) {
+        matriz_confusao[i] = (int *) malloc(neurCamSaida * sizeof(int));
+        for (int j=0; j < neurCamSaida; j++) matriz_confusao[i][j] = 0;
     }
 
     do {
         // Exibindo algumas informacoes
-        printf("\nInformacoes encontradas no conjunto de amostras: \n");
-        printf("Quantidade de amostras no arquivo : %d \n", quant_amostras);
-        printf("Numero de Neuronios na Camada de Entrada: %i \n", neur_cam_entrada);
-        printf("Numero de Neuronios na Camada de Saida: %i \n", neur_cam_saida);
-        printf("Numero de Neurunios na Camada Oculta: %i \n\n", neur_cam_oculta);
+        ExibeInfoNeuronios(qtdAmostras, neurCamEntrada, neurCamSaida, neurCamOculta);
 
         // Configuração manual do numero de neuronios na camada oculta
         printf("Deseja alterar o numero de neuronios na camada oculta? [S,n]: ");
         setbuf(stdin, NULL); scanf("%c", &resp);
         resp = toupper(resp);
+
         if (resp == 'S') {
             printf("Entre com o novo numero de neuronios na camada oculta: ");
-            setbuf(stdin, NULL); scanf("%i", &neur_cam_oculta);
+            setbuf(stdin, NULL); scanf("%i", &neurCamOculta);
         } else if (resp != 'N') return printf("Opcao invalida :( \n");
-        printf("Numero de Neuronios na Camada Oculta: %i \n", neur_cam_oculta);
+        printf("Numero de Neuronios na Camada Oculta: %i \n", neurCamOculta);
 
 
         // Verificando a função de transferência desejada
@@ -180,21 +177,21 @@ int main(int argc, char *argv[]) {
         setbuf(stdin, NULL); scanf("%f", &tx_aprendizado);
 
 
-        // Criando as matrizes com os pesos (linhas: cada nó, coluna: valor respectivo da camada anterior)
+        // Criando as matrizes com os pesos (linhas: cada nó, colum: valor respectivo da camada anterior)
         double **pesos_o;
-        pesos_o = (double **) malloc(neur_cam_oculta * sizeof(sizeof(double *)));
+        pesos_o = (double **) malloc(neurCamOculta * sizeof(sizeof(double *)));
         double **pesos_s;
-        pesos_s = (double **) malloc(neur_cam_saida * sizeof(sizeof(double *)));
+        pesos_s = (double **) malloc(neurCamSaida * sizeof(sizeof(double *)));
         // Gerando pesos aleatórios [-0.5, +0.5]
         srand(time(NULL));
-        for (int i=0; i<neur_cam_oculta; i++) {
-            pesos_o[i] = (double *) malloc(neur_cam_entrada * sizeof(double));
-            for (int j=0; j<neur_cam_entrada; j++)
+        for (int i=0; i < neurCamOculta; i++) {
+            pesos_o[i] = (double *) malloc(neurCamEntrada * sizeof(double));
+            for (int j=0; j < neurCamEntrada; j++)
                 pesos_o[i][j] = (double)(rand())/(double)(RAND_MAX)*0.5 - (double)(rand())/(double)(RAND_MAX)*0.5;
         }
-        for (int i=0; i<neur_cam_saida; i++) {
-            pesos_s[i] = (double *) malloc(neur_cam_oculta * sizeof(double));
-            for (int j=0; j<neur_cam_oculta; j++)
+        for (int i=0; i < neurCamSaida; i++) {
+            pesos_s[i] = (double *) malloc(neurCamOculta * sizeof(double));
+            for (int j=0; j < neurCamOculta; j++)
                 pesos_s[i][j] = (double)(rand())/(double)(RAND_MAX)*0.5 - (double)(rand())/(double)(RAND_MAX)*0.5;
         }
 
@@ -203,19 +200,19 @@ int main(int argc, char *argv[]) {
         puts("\n");
         printf("Pesos iniciais gerados: \n");
         printf("Camada Oculta: \n");
-        ExibeMatrizDouble(pesos_o, neur_cam_oculta, neur_cam_entrada);
+        ExibeMatrizDouble(pesos_o, neurCamOculta, neurCamEntrada);
         puts("\n");
         printf("Camada de Saida: \n");
-        ExibeMatrizDouble(pesos_s, neur_cam_saida, neur_cam_oculta);
+        ExibeMatrizDouble(pesos_s, neurCamSaida, neurCamOculta);
 
         // Loop com o treinamento  =====================================================================================
         int contador = 0;
         double erro; // Erro da rede
-        int classe_posicao = neur_cam_entrada;
+        int classe_posicao = neurCamEntrada;
         printf("\nTreinando . . .");
         do {    // Treina o conjunto de amostras até o limite estabelecido
-            for (linha=0; linha<quant_amostras; linha++) // Passa toda a amostra no Backpropagation
-                erro = Treinar(matriz_amostras[linha], classe_posicao, pesos_o, pesos_s, neur_cam_entrada, neur_cam_oculta, neur_cam_saida);
+            for (row=0; row < qtdAmostras; row++) // Passa toda a amostra no Backpropagation
+                erro = Treinar(matriz_amostras[row], classe_posicao, pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
             contador++;
             printf(" . ");
             if (opcoes[1] == 1) { // erro max
@@ -234,39 +231,39 @@ int main(int argc, char *argv[]) {
         // Exibe os pesos encontrados no treinamento
         ExibeFimTreinamento(contador);
         printf("Camada Oculta: \n");
-        ExibeMatrizDouble(pesos_o, neur_cam_oculta, neur_cam_entrada);
+        ExibeMatrizDouble(pesos_o, neurCamOculta, neurCamEntrada);
         puts("\n");
         printf("Camada de Saida: \n");
-        ExibeMatrizDouble(pesos_s, neur_cam_saida, neur_cam_oculta);
+        ExibeMatrizDouble(pesos_s, neurCamSaida, neurCamOculta);
         puts("\n");
 
         // Teste da rede
         printf("\nSeguindo para os testes da RNA Backpropagation... \n");
-        printf("Quantidade de amostras para o teste: %d \n", quant_amostras);
+        printf("Quantidade de amostras para o teste: %d \n", qtdAmostras);
 
-        for (linha=0; linha<quant_amostras; linha++) // Testando a rede para cada amostra do conjunto de teste
-            Testar(matriz_confusao, matriz_amostras_teste[linha], pesos_o, pesos_s, neur_cam_entrada, neur_cam_oculta, neur_cam_saida);
+        for (row=0; row < qtdAmostras; row++) // Testando a rede para cada amostra do conjunto de teste
+            Testar(matriz_confusao, matriz_amostras_teste[row], pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
 
         // Exibindo matriz de confusão
         printf("\nMatriz de confusao obtida: \n");
-        ExibeMatrizInt(matriz_confusao, neur_cam_saida, neur_cam_saida);
+        ExibeMatrizInt(matriz_confusao, neurCamSaida, neurCamSaida);
 
         // Pergunta se o usuario deseja realizar um novo teste
         printf("\n\nDeseja refazer o treinamento? [S, n]: ");
         setbuf(stdin, NULL); scanf("%c", &op); op =  toupper(op);
 
         // Limpa as matrizes com os pesos e zera a matriz de confusao
-        for(linha=0; linha<neur_cam_oculta; linha++) free(pesos_o[linha]);
-        for(linha=0; linha<neur_cam_saida; linha++) {
-            free(pesos_s[linha]);
-            for(coluna=0; coluna<neur_cam_saida; coluna++) matriz_confusao[linha][coluna]=0;
+        for(row=0; row < neurCamOculta; row++) free(pesos_o[row]);
+        for(row=0; row < neurCamSaida; row++) {
+            free(pesos_s[row]);
+            for(colum=0; colum < neurCamSaida; colum++) matriz_confusao[row][colum]=0;
         }
     } while(op == 'S');
 
     // Finalizando o programa
     printf("\nPrograma finalizdo;;; \n");
-    fclose(arquivo_treino);
-    fclose(arquivo_teste);
+    fclose(arquivoTreino);
+    fclose(arquivoTeste);
 
     system("PAUSE");
     return 0;
