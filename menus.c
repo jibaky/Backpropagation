@@ -18,21 +18,21 @@ void MenuApresentacao(){
 
 void MenuEscolhaFuncao(){
     printf("\nQual funcao de transferencia deseja utilizar? \n");
-    printf("1 - Logística \n");
-    printf("2 - Tangente Hiperbólica \n");
+    printf("1 - Logistica \n");
+    printf("2 - Tangente Hiperbolica \n");
     printf("Opcao: ");
 }
 
 void MenuEscolhaParada(){
-    printf("\nQual condição de parada deseja utilizar? \n");
-    printf("1 - Erro Máximo \n");
-    printf("2 - Numero de Iterações \n");
+    printf("\nQual condicao de parada deseja utilizar? \n");
+    printf("1 - Erro Maximo \n");
+    printf("2 - Numero de Iteracoes \n");
     printf("Opcao: ");
 }
 
 void ExibeFimTreinamento(int i){
     printf("O treinamento foi realizado! \n\n");
-    printf("Numero de iterações: %d \n\n", i);
+    printf("Numero de iteracoes: %d \n\n", i);
     printf("Pesos finais obtidos: \n");
 }
 

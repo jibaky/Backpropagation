@@ -8,12 +8,6 @@
 
 int main(int argc, char *argv[]) {
 
-    // Configurando ambiente
-
-    setlocale(LC_ALL, "Portuguese");
-
-    MenuApresentacao();
-
     // Declaração das variáveis
     char trainingFileName[30];
     char testFileName[30];
@@ -38,10 +32,12 @@ int main(int argc, char *argv[]) {
     int numIteracoes;
     char op;
 
+    MenuApresentacao();
 
     // Abrindo o arquivos de teste e de treino
     if(argc == 1) { // Necessita do nome do arquivo
-        printf("Voce tambem pode entrar com o nome do arquivo direto nos argumentos. \nEx: ./Backpropagation treinamento.csv teste.csv\n\n");
+        puts("\n");
+        printf("O programa tambem pode ser inicializado passando os arquivos como parametro\nEx: ./Backpropagation treinamento.csv teste.csv\n\n");
         printf("Nome do arquivo de treino: ");
         setbuf(stdin, NULL); scanf("%s", trainingFileName);
         printf("Abrindo arquivo: %s \n", trainingFileName);
@@ -58,7 +54,7 @@ int main(int argc, char *argv[]) {
         strcpy(testFileName, argv[2]);
         printf("Abrindo arquivo teste: %s \n", testFileName);
 
-    } else return printf("Argumentos inválidos :( \n");
+    } else return printf("Argumentos invalidos :( \n");
 
     if(!(trainingFile = fopen(trainingFileName, "r")))
         return printf("Arquivo treino não encontrado! :( \n");
@@ -93,7 +89,7 @@ int main(int argc, char *argv[]) {
 
     // Criando a matriz com as amostras de treinamento
 
-    matriz_amostras = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
+    matrizAmostras = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
     rewind(trainingFile);
     fgets(line, sizeof(line), trainingFile);
     while (fgets(line, sizeof(line), trainingFile)) {
@@ -110,14 +106,14 @@ int main(int argc, char *argv[]) {
         if(row == qtdAmostras) break;
     }
 
-    EmbaralharLinhas(matriz_amostras, qtdAmostras); // Embaralhar linhas para desagrupar as classes
+    EmbaralharLinhas(matrizAmostras, qtdAmostras); // Embaralhar linhas para desagrupar as classes
 
 
     // Criando a matriz com as amostras de teste
     qtdAmostras = -1;
 
     while (fgets(line, sizeof(line), testFile)) qtdAmostras++;
-    matriz_amostras_teste = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
+    matrizAmostrasTeste = (int **) malloc(qtdAmostras * sizeof(sizeof(int *)));
     rewind(testFile); row = colum = 0;
     fgets(line, sizeof(line), testFile);
 
@@ -174,7 +170,7 @@ int main(int argc, char *argv[]) {
             setbuf(stdin, NULL); scanf("%lf", &erLimiar);
         } else if (opcoes[1] != 2) return printf("Opcao invalida :( \n");
         else {  // Quant iteracoes
-            printf("Entre com o valor maximo de iterações: ");
+            printf("Entre com o valor maximo de iteracoes: ");
             setbuf(stdin, NULL); scanf("%d", &numIteracoes);
         }
 
@@ -214,7 +210,7 @@ int main(int argc, char *argv[]) {
         int contador = 0;
         double erro; // Erro da rede
         int classe_posicao = neurCamEntrada;
-        printf("\nTreinando...");
+        printf("\nTreinando");
         do {    // Treina o conjunto de amostras até o limite estabelecido
             for (row=0; row < qtdAmostras; row++) // Passa toda a amostra no Backpropagation
                 erro = Treinar(matrizAmostras[row], classe_posicao, pesos_o, pesos_s, neurCamEntrada, neurCamOculta, neurCamSaida);
